@@ -1,30 +1,3 @@
-# Problem Statement
-#
-# Create a class called Football. In football, scores are incremented by either
-# 2, 3, or 7 points. Given a numerical input (integer between 1 and 75)
-# representing a final score, calculate the number of all possible combinations
-# of (2, 3, 7) which add up to that score. The output should be the number of
-# combinations found. Here are a couple of examples:
-#
-# input | output | combinations
-# 1       0
-# 4       1        (2, 2)
-# 9       3        (2, 7), (2, 2, 2, 3), (3, 3, 3)
-# 11      3        (2, 2, 7), (2, 2, 2, 2, 3), (2, 3, 3, 3)
-#
-# Here is the method signature (be sure your method is public:
-# int fetchCombinations(int input)
-#
-# We will check to make sure the input to this problem is valid.
-#
-# Definition
-#
-# Class:	Football
-# Method:	fetchCombinations
-# Parameters:	int
-# Returns:	int
-# Method signature:	int fetchCombinations(int param0)
-#
 # It looks like a typical DP problem. It sounds like a DP problem. And, it is solved like a DP
 # problem. However, there is one bite hidding in the solution. The number of COMBINATIONS. It
 # conflicts with the typical DP steps deriving the value from left side (0) to the right side (input
