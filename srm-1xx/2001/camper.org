@@ -1,7 +1,5 @@
 * Problem Statement
 
-This problem was taken from the Collegiate Challenge Finals
-
 #+BEGIN_EXAMPLE
 Class Name:  Camper
 Method Name:  maxCalories
