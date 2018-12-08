@@ -1,57 +1,66 @@
 # To rephrase the question:
 #
 # There are two kinds of costs for the type of questions about the distance between strings. One of
-# them is a one-time cost - regardless of how many characters are replaced, this cost occur whenever
+# them is a upfront cost - regardless of how many characters are replaced, this cost occur whenever
 # there is one consecutive replacements. The other is an incremental cost (1 in this question) - each
 # modification occurs one of this cost.
 #
 # This is a typical question about string distance, with minor modifications.
 #
-# Say for two specific characters in the two given strings A[i] and B[j]:
-# - If they are different, the only choice is to use a "-". The cost increases accordingly.
-# - If they are the same, there are two choices. Let them match each other and keep the previous
-#   cost. Or defer the match and increase the cost.
+# Assuming the D[i, j] is the optimal cost between two sub-strings A[:i] and B[:j], it is the
+# *smallest* value among three cases -
+# - If they are different, there are two choices
+#   - D[i, j-1] + cost, add the "-" from B.
+#   - D[i-1, j] + cost, add the "-" from A.
+#   - In either case, the "cost" depends whether it needs to pay the upfront charge.
+# - If they are the same, there is /one more/ choice - use the value D[i-1, j-1].
 #
-# Imagine a 2D matrix x with A as columns and B as rows
-# To find the minimum value for the spot x[i][j], there are three possibilities:
-# - x[i-1][j] --> x[i][j]: extending A for a "-"
-# - x[i][j-1] --> x[i][j]: extending B for a "-"
-# - x[i-1][j-1] --> x[i][j]: extending A and B each for a "-" if A[j] != B[i]. Otherwise, keep the
-#   value of x[i-1][j-1].
-#
-# The cost of adding a "-" depending on if the previous place is an extension of "-" or a matching.
-# To split the tie, extending "-" is preferred since it covers the one-time cost in the value.
+# As a reuslt, there are /up to/ three possbile values in each *intermediate* step rather than only
+# one /smallest/ result, because the upfront cost might be so high that it is cheaper to extend the
+# "-" from a sub-optimal step than starting a new series of "-" from the optimal step.
+
+
+class Node:
+    def __init__(self, a, b, c):
+        self.extenda = a
+        self.extendb = b
+        self.matched = c
+
+    def __repr__(self):
+        return str([self.extenda, self.extendb, self.matched])
+
 
 class Alignment:
-
     def align(self, a, b, x):
-        register = [(0, x, 0)]
-        for i in range(len(a)):
-            register.append((x+i+1, x, 0))
+        # The maximum possbile cost - intermittent using "-" for both A and B
+        max_value = 2 * x * (len(a) + len(b))
 
-        print("")
-        print(register)
-        for i, cb in enumerate(b):
-            current = [(x+i+1, 0, x)]
-            for j, ca in enumerate(a):
-                if ca == cb:
-                    if register[j+1][0] + register[j+1][1] < current[-1][0] + current[-1][2]:
-                        spot = (register[j+1][0] + 1 + register[j+1][1], 0, register[j+1][2])
-                    else:
-                        spot = (current[-1][0] + 1 + current[-1][2], current[-1][1], 0)
-                    if register[j][0] < spot[0]:
-                        spot = (register[j][0], x, x)
+        register = [Node(0, 0, 0)]
+        for i in range(len(a)):
+            register.append(Node(max_value, x + i + 1, max_value))
+
+        for i, bc in enumerate(b):
+            tmp = [Node(x + i + 1, max_value, max_value)]
+            for j, ac in enumerate(a):
+                if ac == bc:
+                    matched = min(register[j].matched, register[j].extenda,
+                                  register[j].extendb)
                 else:
-                    if register[j+1][0] + register[j+1][1] < current[-1][0] + current[-1][2]:
-                        spot = (register[j+1][0] + 1 + register[j+1][1], 0, register[j+1][2])
-                    else:
-                        spot = (current[-1][0] + 1 + current[-1][2], current[-1][1], 0)
-                    if register[j][0] + 2*x + 2 <= spot[0]:
-                        spot = (register[j][0] + 2*x + 2, 0, 0)
-                current.append(spot)
-            register = current
-            print(register)
-        return register[-1][0]
+                    matched = max_value
+                prev_a = register[j + 1]
+                prev_b = tmp[-1]
+
+                extenda = min(prev_a.extenda + 1, prev_a.extendb + x + 1,
+                              prev_a.matched + x + 1)
+                extendb = min(prev_b.extendb + 1, prev_b.extenda + x + 1,
+                              prev_b.matched + x + 1)
+                tmp.append(Node(extenda, extendb, matched))
+
+            register = tmp
+
+        last_item = register[-1]
+        return min(last_item.extenda, last_item.extendb, last_item.matched)
+
 
 a = Alignment()
 
