@@ -33,7 +33,7 @@ class Node:
 class Alignment:
     def align(self, a, b, x):
         # The maximum possbile cost - intermittent using "-" for both A and B
-        max_value = 2 * x * (len(a) + len(b))
+        max_value = (x + 1) * (len(a) + len(b))
 
         register = [Node(0, 0, 0)]
         for i in range(len(a)):
@@ -67,10 +67,19 @@ a = Alignment()
 ans = a.align("ABC", "ACE", 1)
 print(ans, ans == 4)
 
+ans = a.align("ABC", "ABC", 100)
+print(ans, ans == 0)
+
+ans = a.align("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", 100)
+print(ans, ans == 300)
+
 ans = a.align("AA", "B", 1)
 print(ans, ans == 5)
 
-# AAABAAAABAA----
-# AAA----ABAABAAA
 ans = a.align("AAABAAAABAA", "AAAABAABAAA", 10)
 print(ans, ans == 28)
+
+ans = a.align("ACCACCBBBCCABAACCBBCCCBBCCAC",
+              "BBABBBCCCABBBBCABABCBBBCBAAACACBAAABAAABA", 6)
+print(ans, ans == 75)
