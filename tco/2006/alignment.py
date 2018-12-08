@@ -15,9 +15,17 @@
 #   - In either case, the "cost" depends whether it needs to pay the upfront charge.
 # - If they are the same, there is /one more/ choice - use the value D[i-1, j-1].
 #
+# This ^^ is the induction formula.
+#
 # As a reuslt, there are /up to/ three possbile values in each *intermediate* step rather than only
 # one /smallest/ result, because the upfront cost might be so high that it is cheaper to extend the
 # "-" from a sub-optimal step than starting a new series of "-" from the optimal step.
+#
+# And this ^^ defines what needs to store in each step.
+#
+# The final question is what is the worst case (maximum value) that each step uses to compare. It
+# should also be a /valid/ result if there is nothing matched and the "-" occurse /alternatively/.
+# That is, each insertion also incurs the upfront cost.
 
 
 class Node:
