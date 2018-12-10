@@ -40,8 +40,16 @@
 # 以从子集中合并上来。判断一个集合能不能都平衡只要对角的大小排序即可。
 
 
-class Group:
-    def __init__(self, left, right, capacity):
+def parent(index, register):
+    n = register[index].parent
+    while register[n].index != register[n].parent:
+        n = register[n].parent
+    return n
+
+class Node:
+    def __init__(self, left, right, capacity, index):
+        self.parent = None
+        self.index = index
         self.register = sorted([left, right])
         self.capacity = capacity
         self.balanced = abs(left - right) <= capacity
@@ -61,10 +69,16 @@ class Group:
     def min(self):
         return self.register[0]
 
-    def merge(self, g2):
-        self.register = sorted(self.register + g2.register)
-        if self.balanced and g2.balanced:
-            self.counter += g2.counter
+    def merge(self, n2):
+        if self.parent and parent(n2) == parent(self):
+            return
+        elif self.parent is None:
+            self.parent = self.index
+
+        self.register = sorted(self.register + n2.register)
+        n2.parent = self.index
+        if self.balanced and n2.balanced:
+            self.counter += n2.counter
             return
         for i in range(0, len(self.register), 2):
             if self.register[i + 1] - self.register[i] > self.capacity:
@@ -80,29 +94,23 @@ class AntlerSwapping:
     def getmin(self, a, b, c):
         register = []
         for i in range(len(a)):
-            register.append(Group(a[i], b[i], c))
+            register.append(Node(a[i], b[i], c, i))
 
         if len(register) == 1:
             return register.balanced
 
-        register.sort(key=lambda k: k.min)
-        while len(register) > 1:
-            first = register[0]
-            second = register[1]
-            if first.max > second.min:
-                first.merge(second)
-                register.pop(1)
-                print(register)
-                continue
-            break
+        distance = []
+        for i in range(len(a)):
+            for j in range(i+1, len(a)):
+                distance.append((abs(a[i] - a[j]) + abs(b[i]-b[j]), i, j))
 
-        counter = 0
-        for group in register:
-            if group.counter == -1:
-                return -1
-            counter += group.counter
+        distance.sort(key=lambda k: k[0])
+        while distance:
+            _, i, j = distance.pop(0)
+            register[i].merge(register[j])
 
-        return counter
+        node = parent(0, register)
+        return register[node].counter
 
 
 sol = AntlerSwapping()
