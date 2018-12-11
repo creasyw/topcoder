@@ -1,26 +1,3 @@
-# This question is hard in a unique way - for most of the cases, the DP question has one or multiple
-# degrees of freedoms so that we can abstract them into different axis. The basic assumption is that
-# these axis are independent from one another. However, in this case, there are two degrees of
-# freedoms while we can move one element from one axis to the other...
-#
-# Actually, I lie... the capacity is the third degree of freedom.
-#
-# There are three conditions for each deer. 1) Its antlers are at the edge of the capacity -
-# meaning, we cannot switch either of them with another antler. 2) Its antlers are within the
-# capacity. 3) They are out of capacity.
-#
-# +There is no operation for the first case. The third case has to work with the second or third case
-# to find a solution (regardless of the "minimum" number of operations).+
-#
-# Fuck, it is hard! All three cases can be move so that we can have the final result. e.g.,
-# [4, 5] and [3, 3] with capacity as 1. The final result is [4, 3] and [5, 3].
-#
-# 1) we are moving the diffs between the two lists. The capacity is the absolute value of the
-# differences between these two lists, but both positive and negative have meanings while we're
-# switching the antlers.
-#
-# 2) Both the diff and the absolute values matter.
-#
 # Given two lists. Calculate the differences between them. The smallest possible solution equals
 # ceil(number of pairs beyond capacity / 2). The largest possible result is N - 1, where N is the
 # length of either given list. But the annoying part is that only the number of operations increases
